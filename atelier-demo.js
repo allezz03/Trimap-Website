@@ -7,16 +7,22 @@
   const canvas = root.querySelector('.atelier-demo-canvas');
   const actions = root.querySelector('.atelier-demo-actions');
   const ecommerce = root.querySelector('.atelier-demo-ecommerce');
-  const status = root.querySelector('.atelier-demo-ecommerce-status');
   const context = canvas.getContext('2d');
   if (!context || !context.roundRect) return;
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const preview = new Image();
+  const vybePhoto = new Image();
   const cream = '#f5f2eb';
   const atelierAt = 0.42;
   const laptopAt = 0.60;
+  const openingAt = 0.77;
   const openAt = 0.92;
+  const vybeImage = { x: 387, y: 112, width: 392, height: 316 };
+  const vybeInk = '#101113';
+  const vybeWhite = '#f4f4ef';
+  const vybeOrange = '#ff593d';
+  const vybeLime = '#d8ff38';
   let screens;
   let pendingFrame = 0;
   let lastFrame;
@@ -72,27 +78,68 @@
     return image;
   }
 
-  function drawPendingSite(art) {
+  function drawVybeHome(art) {
     const ctx = art.getContext('2d');
     const w = art.width;
-    const h = art.height;
-    ctx.fillStyle = gradient(ctx, 0, 0, w, h, [[0, '#12282e'], [1, '#09161d']]);
-    ctx.fillRect(0, 0, w, h);
-    const light = ctx.createRadialGradient(w * 0.8, h * 0.53, 0, w * 0.8, h * 0.53, h * 0.56);
-    light.addColorStop(0, '#25565b');
-    light.addColorStop(1, 'rgba(37, 86, 91, 0)');
-    ctx.fillStyle = light;
-    ctx.fillRect(0, 0, w, h);
-    write(ctx, 'TRIMAP', 42, 51, '700 18px Inter, Arial, sans-serif', '#def0f0');
-    line(ctx, 42, 69, w - 42, 69, '#416068');
+    ctx.fillStyle = vybeInk;
+    ctx.fillRect(0, 0, w, art.height);
+    ctx.fillStyle = vybeOrange;
+    ctx.fillRect(0, 0, w, 18);
+    write(ctx, 'FREE SHIPPING OVER €100    ✳    FIND YOUR OWN RHYTHM', w / 2, 12,
+      '800 8px Inter, Arial, sans-serif', vybeInk, 'center');
+    write(ctx, 'VYBE', 41, 53, '900 29px Inter, Arial, sans-serif', vybeWhite);
+    write(ctx, '®', 122, 34, '700 9px Inter, Arial, sans-serif', vybeOrange);
+    write(ctx, 'SHOP ALL       HOODIES       T-SHIRTS       BOTTOMS', w / 2, 47,
+      '700 10px Inter, Arial, sans-serif', vybeWhite, 'center');
+    write(ctx, 'BAG (0)', 742, 47, '700 10px Inter, Arial, sans-serif', vybeLime);
+    line(ctx, 0, 65, w, 65, '#333336');
+    write(ctx, 'NEW SEASON / DROP 001', 42, 102, '700 9px Inter, Arial, sans-serif', '#b8b8b5');
 
-    // A simple motif marks the temporary screen without suggesting a real project.
+    ctx.font = '900 72px Inter, Arial, sans-serif';
+    ctx.textAlign = 'left';
+    const title = ['WEAR', 'YOUR', 'OWN', 'RHYTHM.'];
+    title.forEach((word, row) => {
+      ctx.fillStyle = row === title.length - 1 ? vybeOrange : vybeWhite;
+      ctx.fillText(word, 39, 167 + row * 61, 322);
+    });
+    write(ctx, 'Streetwear essentials designed for everyday moves.', 42, 383,
+      '500 12px Inter, Arial, sans-serif', '#b2b2b0');
+    write(ctx, 'No rules. Just your vibe.', 42, 400, '500 12px Inter, Arial, sans-serif', '#b2b2b0');
+    ctx.fillStyle = vybeLime;
+    ctx.fillRect(42, 418, 133, 27);
+    write(ctx, 'DISCOVER THE DROP ↗', 108.5, 435, '800 8px Inter, Arial, sans-serif', vybeInk, 'center');
+    line(ctx, 0, 470, w, 470, '#333336');
+    write(ctx, 'MADE TO MOVE  /  NO RULES', 42, 490, '700 8px Inter, Arial, sans-serif', '#aaa9a6');
+    write(ctx, 'EVERYDAY UNIFORM  /  VYBE STUDIO', w - 41, 490,
+      '700 8px Inter, Arial, sans-serif', '#aaa9a6', 'right');
+  }
+
+  function drawVybePhoto(art, seconds) {
+    const ctx = art.getContext('2d');
+    const { x, y, width, height } = vybeImage;
     ctx.save();
-    ctx.translate(w * 0.83, h * 0.55);
-    ctx.rotate(-0.36);
-    for (const [size, color] of [[143, '#4a8388'], [109, '#528f93'], [75, '#6dabae']]) {
-      rounded(ctx, -size / 2, -size / 2, size, size, 20, null, color);
+    ctx.beginPath();
+    ctx.rect(x, y, width, height);
+    ctx.clip();
+    ctx.fillStyle = '#26282a';
+    ctx.fillRect(x, y, width, height);
+
+    if (vybePhoto.naturalWidth) {
+      // VYBE's heroFloat alternates from scale(1) to scale(1.035) over eight seconds.
+      const zoom = 1 + 0.035 * (1 - Math.cos(seconds * Math.PI / 8)) / 2;
+      const scale = zoom * Math.max(width / vybePhoto.naturalWidth, height / vybePhoto.naturalHeight);
+      const photoWidth = vybePhoto.naturalWidth * scale;
+      const photoHeight = vybePhoto.naturalHeight * scale;
+      ctx.drawImage(vybePhoto, x + (width - photoWidth) / 2, y + (height - photoHeight) / 2,
+        photoWidth, photoHeight);
     }
+
+    const bob = (1 - Math.cos(seconds * 2 * Math.PI / 5)) / 2;
+    ctx.translate(x + 20, y + 48 - 6 * bob);
+    ctx.rotate(mix(-12, -5, bob) * Math.PI / 180);
+    rounded(ctx, -32, -32, 64, 64, 32, vybeLime);
+    write(ctx, 'FIND YOUR', 0, -2, '800 7px Inter, Arial, sans-serif', vybeInk, 'center');
+    write(ctx, 'OWN RHYTHM', 0, 8, '800 7px Inter, Arial, sans-serif', vybeInk, 'center');
     ctx.restore();
   }
 
@@ -198,7 +245,7 @@
 
     const lidShape = planeCorners(lid, half, 0, height);
     const lidTop = lid(0, height).y;
-    let screenCenter = null;
+    let linkPosition = null;
     if (lidTop >= hinge - 1) {
       polygon(ctx, lidShape, gradient(ctx, 0, hinge, 0, frontY + 1, [[0, '#293941'], [0.55, '#536870'], [1, '#829497']]), '#a1afb0');
     } else {
@@ -207,7 +254,7 @@
       const screenHalf = half - frame;
       const near = frame * 1.16;
       const far = height - frame;
-      screenCenter = lid(0, (near + far) / 2);
+      linkPosition = { anchor: lid(0, mix(far, near, 0.86)), bottom: lid(0, near).y };
       ctx.save();
       polygon(ctx, planeCorners(lid, screenHalf, near, far), '#15272c');
       ctx.clip();
@@ -228,7 +275,7 @@
     }
     line(ctx, center - half + 3, hinge + 0.8, center + half - 3, hinge + 0.8, '#202c31', 1.5);
     ctx.restore();
-    return screenCenter;
+    return linkPosition;
   }
 
   const wide = {
@@ -257,7 +304,7 @@
     };
   }
 
-  function drawScene(ctx, width, height, progress, showAtelier, showEcommerce) {
+  function drawScene(ctx, width, height, progress, placeAtelier, placeEcommerce) {
     ctx.clearRect(0, 0, width, height);
 
     const layout = width <= 600 && width <= height ? narrow : wide;
@@ -269,13 +316,13 @@
     const tabletIn = smooth(0, 0.31, progress);
     const phoneIn = smooth(0.07, atelierAt, progress);
     const laptopIn = smooth(laptopAt, 0.76, progress);
-    const opening = smooth(0.77, openAt, progress);
+    const opening = smooth(openingAt, openAt, progress);
 
     ctx.save();
     ctx.translate(left, top);
     ctx.scale(scale, scale);
     handheld(ctx, screens.tablet, devicePose(layout.tablet, arrange, tabletIn, 32), false);
-    const screenCenter = laptop(ctx, screens.laptop, {
+    const linkPosition = laptop(ctx, screens.laptop, {
       ...layout.laptop,
       hinge: layout.laptop.hinge + 30 * (1 - laptopIn),
       opening,
@@ -284,29 +331,37 @@
     handheld(ctx, screens.phone, devicePose(layout.phone, arrange, phoneIn, 26), true);
     ctx.restore();
 
-    if (showAtelier) {
-      const [x, y] = layout.action[showEcommerce ? 1 : 0];
+    if (placeAtelier) {
+      const [x, y] = layout.action[placeEcommerce ? 1 : 0];
       root.style.setProperty('--atelier-action-x', `${left + x * scale}px`);
       root.style.setProperty('--atelier-action-y', `${top + y * scale}px`);
     }
-    if (showEcommerce && screenCenter) {
-      root.style.setProperty('--atelier-ecommerce-x', `${left + screenCenter.x * scale}px`);
-      root.style.setProperty('--atelier-ecommerce-y', `${top + screenCenter.y * scale}px`);
+    if (placeEcommerce && linkPosition) {
+      const { anchor, bottom } = linkPosition;
+      const y = Math.min(anchor.y * scale, bottom * scale - 24);
+      root.style.setProperty('--atelier-ecommerce-x', `${left + anchor.x * scale}px`);
+      root.style.setProperty('--atelier-ecommerce-y', `${top + y}px`);
     }
   }
 
-  function render() {
+  function render(time) {
     pendingFrame = 0;
-    const { width, height } = canvas.getBoundingClientRect();
+    const { width, height, top, bottom } = canvas.getBoundingClientRect();
     if (!width || !height) return;
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const rect = root.getBoundingClientRect();
     const stickyTop = parseFloat(getComputedStyle(sticky).top);
     const travel = Math.max(1, rect.height - sticky.offsetHeight);
-    const progress = reducedMotion.matches ? 1 : Math.max(0, Math.min(1, (stickyTop - rect.top) / travel));
-    if (lastFrame?.progress === progress && lastFrame.width === width &&
-      lastFrame.height === height && lastFrame.dpr === dpr) return;
-    lastFrame = { progress, width, height, dpr };
+    const reduced = reducedMotion.matches;
+    const progress = reduced ? 1 : Math.max(0, Math.min(1, (stickyTop - rect.top) / travel));
+    const animateVybe = vybePhoto.naturalWidth > 0 && progress > openingAt && !reduced &&
+      !document.hidden && bottom > stickyTop && top < innerHeight;
+    if (animateVybe) requestFrame();
+
+    const sameScene = lastFrame?.progress === progress && lastFrame.width === width &&
+      lastFrame.height === height && lastFrame.dpr === dpr && lastFrame.reduced === reduced;
+    if (sameScene && (!animateVybe || time - lastFrame.time < 32)) return;
+    lastFrame = { progress, width, height, dpr, reduced, time };
 
     const pixelWidth = Math.round(width * dpr);
     const pixelHeight = Math.round(height * dpr);
@@ -318,34 +373,37 @@
 
     const showEcommerce = progress >= openAt;
     const showAtelier = showEcommerce || (progress >= atelierAt && progress < laptopAt);
-    drawScene(context, width, height, progress, showAtelier, showEcommerce);
-    actions.hidden = !showAtelier;
-    ecommerce.hidden = !showEcommerce;
-    status.hidden = !showEcommerce;
+    if (progress > openingAt) drawVybePhoto(screens.laptop, reduced ? 0 : time / 1000);
+    drawScene(context, width, height, progress, !sameScene && showAtelier, !sameScene && showEcommerce);
+    if (!sameScene) {
+      actions.hidden = !showAtelier;
+      ecommerce.hidden = !showEcommerce;
+    }
   }
 
   function requestFrame() {
     if (!pendingFrame) pendingFrame = requestAnimationFrame(render);
   }
 
-  ecommerce.addEventListener('click', () => {
-    const show = ecommerce.getAttribute('aria-expanded') === 'false';
-    ecommerce.setAttribute('aria-expanded', String(show));
-    status.textContent = show ? 'Demo in arrivo' : '';
-  });
-
   preview.addEventListener('load', () => {
     screens = { tablet: texture(820, 565), phone: texture(390, 820), laptop: texture(820, 510) };
     screens.tablet.getContext('2d').drawImage(preview, 0, 0, 820, 565, 0, 0, 820, 565);
     screens.phone.getContext('2d').drawImage(preview, 820, 0, 390, 820, 0, 0, 390, 820);
-    drawPendingSite(screens.laptop);
+    drawVybeHome(screens.laptop);
 
     root.classList.add('is-animated');
     addEventListener('scroll', requestFrame, { passive: true });
     addEventListener('resize', requestFrame, { passive: true });
     addEventListener('pageshow', requestFrame);
+    document.addEventListener('visibilitychange', requestFrame);
     reducedMotion.addEventListener('change', requestFrame);
     requestFrame();
   }, { once: true });
+  vybePhoto.addEventListener('load', () => {
+    if (!screens) return;
+    lastFrame = null;
+    requestFrame();
+  }, { once: true });
   preview.src = new URL('assets/atelier27-preview.webp', document.currentScript.src).href;
+  vybePhoto.src = new URL('assets/vybe-hero.webp', document.currentScript.src).href;
 })();

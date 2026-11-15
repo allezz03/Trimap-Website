@@ -69,19 +69,6 @@
 .atelier-demo-ecommerce {
   left: var(--atelier-ecommerce-x);
   top: var(--atelier-ecommerce-y);
-  cursor: pointer;
-}
-
-.atelier-demo-ecommerce-status {
-  position: absolute;
-  left: var(--atelier-ecommerce-x);
-  top: calc(var(--atelier-ecommerce-y) + 30px);
-  translate: -50% 0;
-  margin: 0;
-  color: #cfe7ed;
-  font-size: .72rem;
-  line-height: 1.15;
-  white-space: nowrap;
 }
 
 @media (max-width: 1000px), (max-height: 560px) {
@@ -95,11 +82,6 @@
   .atelier-demo-actions .ico {
     width: 12px;
     height: 12px;
-  }
-
-  .atelier-demo-ecommerce-status {
-    top: calc(var(--atelier-ecommerce-y) + 23px);
-    font-size: .64rem;
   }
 }
 
